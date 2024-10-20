@@ -129,7 +129,10 @@ function processFile() {
     const blob = new Blob([updatedXml], { type: "application/xml" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = file.name;
+
+    // Set the download name to include the new ".mobiledevicepairing" extension
+    const newFileName = file.name.split('.').slice(0, -1).join('.') + '.mobiledevicepairing';
+    link.download = newFileName;
     link.click();
   };
 
