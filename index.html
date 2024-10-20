@@ -54,8 +54,6 @@
 
 <h1>SideJITServer / JITStreamer Pairing File to SideStore Pairing File</h1>
 
-<p>(NOTE: This is experimental)</p>
-
 <!-- Input field to upload a file -->
 <input type="file" id="fileInput" accept=".plist,.xml">
 
@@ -66,7 +64,6 @@
 <!-- Button to trigger the file processing -->
 <button onclick="processFile()">Add UDID</button>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xml-js/1.6.11/xml-js.min.js"></script>
 <script>
 function processFile() {
   const fileInput = document.getElementById('fileInput');
@@ -88,25 +85,46 @@ function processFile() {
   reader.onload = function(e) {
     const xmlData = e.target.result;
 
-    // Parse XML
-    let jsonObj = xmljs.xml2js(xmlData, {compact: true});
+    // Parse XML using DOMParser
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xmlData, "application/xml");
 
-    // Check if UDID key exists, if not add it
-    const dict = jsonObj.plist.dict;
-    let keys = dict.key.map(key => key._text);
-    
-    if (!keys.includes('UDID')) {
-      dict.key.push({ _text: 'UDID' });
-      dict.string.push({ _text: udidValue });
-    } else {
-      alert('UDID key already exists.');
+    // Navigate to the <dict> element
+    const dict = xmlDoc.getElementsByTagName("dict")[0];
+
+    // Check if the UDID key already exists
+    const keys = dict.getElementsByTagName("key");
+    let udidExists = false;
+
+    for (let i = 0; i < keys.length; i++) {
+      if (keys[i].textContent === "UDID") {
+        udidExists = true;
+        break;
+      }
     }
 
-    // Convert back to XML
-    const updatedXml = xmljs.js2xml(jsonObj, {compact: true, spaces: 4});
+    if (!udidExists) {
+      // Create <key>UDID</key> and <string>{UDID}</string> elements
+      const udidKey = xmlDoc.createElement("key");
+      udidKey.textContent = "UDID";
+
+      const udidString = xmlDoc.createElement("string");
+      udidString.textContent = udidValue;
+
+      // Append them to the <dict> element
+      dict.appendChild(udidKey);
+      dict.appendChild(udidString);
+    } else {
+      alert("UDID key already exists.");
+      return;
+    }
+
+    // Serialize the updated XML back to a string
+    const serializer = new XMLSerializer();
+    const updatedXml = serializer.serializeToString(xmlDoc);
 
     // Create a Blob with the updated XML content
-    const blob = new Blob([updatedXml], {type: "application/xml"});
+    const blob = new Blob([updatedXml], { type: "application/xml" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
     link.download = file.name;
