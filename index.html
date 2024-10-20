@@ -54,15 +54,17 @@
 
 <h1>SideJITServer / JITStreamer Pairing File to SideStore Pairing File</h1>
 
+<p>(NOTE: This is Experimental)</p>
+
 <!-- Input field to upload a file -->
-<input type="file" id="fileInput" accept=".plist,.xml">
+<input type="file" id="fileInput" accept=".plist">
 
 <!-- Text input for UDID -->
 <label for="udidInput">Enter Device UDID:</label>
 <input type="text" id="udidInput" placeholder="Enter UDID here">
 
 <!-- Button to trigger the file processing -->
-<button onclick="processFile()">Add UDID</button>
+<button onclick="processFile()">Convert</button>
 
 <script>
 function processFile() {
