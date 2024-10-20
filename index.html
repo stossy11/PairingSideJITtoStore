@@ -4,10 +4,57 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SideJIT > SideStore</title>
+
+  <!-- Link to Google Fonts for a modern font -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Internal CSS to apply the font -->
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+
+    h1 {
+      font-weight: 500;
+      color: #222;
+    }
+
+    label {
+      font-weight: 500;
+    }
+
+    input, button {
+      font-family: inherit;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
 </head>
 <body>
 
 <h1>SideJITServer / JITStreamer Pairing File to SideStore Pairing File</h1>
+
+<p>(NOTE: This is experimental)</p>
 
 <!-- Input field to upload a file -->
 <input type="file" id="fileInput" accept=".plist,.xml">
