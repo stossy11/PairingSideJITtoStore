@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SideJIT > SideStore</title>
+</head>
+<body>
+
+<h1>SideJITServer / JITStreamer Pairing File to SideStore Pairing File</h1>
+
+<!-- Input field to upload a file -->
+<input type="file" id="fileInput" accept=".plist,.xml">
+
+<!-- Text input for UDID -->
+<label for="udidInput">Enter Device UDID:</label>
+<input type="text" id="udidInput" placeholder="Enter UDID here">
+
+<!-- Button to trigger the file processing -->
+<button onclick="processFile()">Add UDID</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xml-js/1.6.11/xml-js.min.js"></script>
+<script>
+function processFile() {
+  const fileInput = document.getElementById('fileInput');
+  const udidValue = document.getElementById('udidInput').value;
+
+  if (!fileInput.files.length) {
+    alert("Please select a file first.");
+    return;
+  }
+
+  if (!udidValue) {
+    alert("Please enter a UDID.");
+    return;
+  }
+
+  const file = fileInput.files[0];
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    const xmlData = e.target.result;
+
+    // Parse XML
+    let jsonObj = xmljs.xml2js(xmlData, {compact: true});
+
+    // Check if UDID key exists, if not add it
+    const dict = jsonObj.plist.dict;
+    let keys = dict.key.map(key => key._text);
+    
+    if (!keys.includes('UDID')) {
+      dict.key.push({ _text: 'UDID' });
+      dict.string.push({ _text: udidValue });
+    } else {
+      alert('UDID key already exists.');
+    }
+
+    // Convert back to XML
+    const updatedXml = xmljs.js2xml(jsonObj, {compact: true, spaces: 4});
+
+    // Create a Blob with the updated XML content
+    const blob = new Blob([updatedXml], {type: "application/xml"});
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = file.name;
+    link.click();
+  };
+
+  reader.readAsText(file);
+}
+</script>
+
+</body>
+</html>
